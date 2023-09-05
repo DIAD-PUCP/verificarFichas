@@ -10,7 +10,6 @@ def leer_archivo(f):
 
 @st.cache_data
 def resumen(df):
-    df = df.fillna('')
     maxItems = {
         'ESTUDIOS GENERALES CIENCIAS': 76,
         'ESTUDIOS GENERALES LETRAS': 68,
@@ -26,8 +25,9 @@ def resumen(df):
     st.write(f'**Último ítem**: {items[-1]}')
     df['MAXITEMS'] = df['UNIDAD'].apply(lambda x: maxItems[x])
     marcas = df.apply(
-        lambda x: x['item1':f'item{x["MAXITEMS"]}'],axis=1
-    ).reindex(items,axis=1).fillna('')
+        lambda x: x['item1':f'item{x["MAXITEMS"]}'].fillna(' '),axis=1
+    ).reindex(items,axis=1)
+    st.write(marcas)
     errores = marcas.apply(lambda x:x.str.startswith('!!ERROR!!')).sum(axis=1)
     blancos = (marcas == ' ').sum(axis=1)
     dobles = (marcas.apply(lambda x:x.str.len()) > 1).sum(axis=1) - errores
