@@ -27,7 +27,6 @@ def resumen(df):
     marcas = df.apply(
         lambda x: x['item1':f'item{x["MAXITEMS"]}'].fillna(' '),axis=1
     ).reindex(items,axis=1)
-    st.write(marcas)
     errores = marcas.apply(lambda x:x.str.startswith('!!ERROR!!')).sum(axis=1)
     blancos = (marcas == ' ').sum(axis=1)
     dobles = (marcas.apply(lambda x:x.str.len()) > 1).sum(axis=1) - errores
