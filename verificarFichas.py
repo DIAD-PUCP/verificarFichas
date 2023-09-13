@@ -23,7 +23,7 @@ def resumen(df):
     items = df.filter(regex='item.*').columns
     st.write(f'**Primer ítem**: {items[0]}')
     st.write(f'**Último ítem**: {items[-1]}')
-    df['MAXITEMS'] = df['UNIDAD'].apply(lambda x: maxItems[x])
+    df['MAXITEMS'] = df['UNIDAD'].apply(lambda x: maxItems[x] if x in maxItems else 76)
     marcas = df.apply(
         lambda x: x['item1':f'item{x["MAXITEMS"]}'].fillna(' '),axis=1
     ).reindex(items,axis=1)
