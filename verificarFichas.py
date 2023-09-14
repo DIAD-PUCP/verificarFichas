@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import streamlit as st
 from io import BytesIO
 from zipfile import ZipFile
@@ -7,7 +8,11 @@ import csv
 
 @st.cache_data
 def leer_archivo(f):
-    return pd.read_csv(f,dtype=str)
+    d = pd.read_csv(f,dtype=str)
+    if 'preg1' in d.columns:
+        d['PROCESO'] = 'Evaluación de Potencial'
+        d = d.rename(columns= lambda x: x.replace('preg','item') if x.startswith('preg') else x)
+    return d
 
 @st.cache_data
 def resumen(df):
@@ -25,6 +30,7 @@ def resumen(df):
     st.write(f'**Primer ítem**: {items[0]}')
     st.write(f'**Último ítem**: {items[-1]}')
     df['MAXITEMS'] = df['UNIDAD'].apply(lambda x: maxItems[x] if x in maxItems else 76)
+    df['MAXITEMS'] = np.where(df['PROCESO']=='Evaluación de Potencial', 96, df['MAXITEMS'])
     marcas = df.apply(
         lambda x: x['item1':f'item{x["MAXITEMS"]}'].fillna(' '),axis=1
     ).reindex(items,axis=1)
@@ -63,7 +69,7 @@ def main():
         res = resumen(df)
         zip_archivos(df,lectura)
         st.header('Revisión de fichas')
-        t = st.slider('Número de incidentes para revisión: ',min_value=0,max_value=76,value=10)
+        t = st.slider('Número de incidentes para revisión: ',min_value=0,max_value=96,value=10)
         st.dataframe(res[res['TOTAL']>=t])
         st.header('Fichas por proceso:')
         st.dataframe(df['PROCESO'].value_counts())
