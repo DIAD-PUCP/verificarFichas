@@ -3,6 +3,7 @@ import streamlit as st
 from io import BytesIO
 from zipfile import ZipFile
 import datetime as dt
+import csv
 
 @st.cache_data
 def leer_archivo(f):
@@ -49,7 +50,7 @@ def zip_archivos(df,lectura):
             procesoBuffer.write(lectura.getvalue())
         for proceso in df['PROCESO'].unique():
             with zf.open(f'{sede} - {proceso} - {fecha}.csv','w') as procesoBuffer:
-                df[df['PROCESO']==proceso].to_csv(procesoBuffer,index=False)
+                df[df['PROCESO']==proceso].drop(columns='PROCESO').to_csv(procesoBuffer,index=False,quoting=csv.QUOTE_ALL)
     st.download_button("Descargar archivos",data=tempZip.getvalue(),file_name=f'{sede} - {fecha}.zip',mime="application/zip")
     tempZip.close()
 
