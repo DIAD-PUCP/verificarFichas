@@ -37,7 +37,7 @@ def resumen(df):
     errores = marcas.apply(lambda x:x.str.startswith('!!ERROR!!')).sum(axis=1)
     blancos = (marcas == ' ').sum(axis=1)
     dobles = (marcas.apply(lambda x:x.str.len()) > 1).sum(axis=1) - errores
-    res = df[['EXAMEN']].join(
+    res = df[['EXAMEN','AULA','POSICION']].join(
         blancos.rename('BLANCOS')
     ).join(
         errores.rename('ERRORES')
