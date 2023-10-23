@@ -9,6 +9,7 @@ import csv
 @st.cache_data
 def leer_archivo(f):
     d = pd.read_csv(f,dtype=str)
+    d = d.rename(columns={'POSICIÓN':'POSICION'})
     if 'preg1' in d.columns:
         d['PROCESO'] = 'Evaluación de Potencial'
         d = d.rename(columns= lambda x: x.replace('preg','item') if x.startswith('preg') else x)
@@ -48,6 +49,8 @@ def resumen(df):
     return res.sort_values('TOTAL',ascending=False)
 
 def zip_archivos(df,lectura):
+    if 'SEDE' not in df.columns:
+        df['SEDE'] = 'Lima'
     sede = df['SEDE'].unique()[0]
     fecha = dt.datetime.now().strftime(r'%Y-%m-%d %H:%M:%S')
     tempZip = BytesIO()
